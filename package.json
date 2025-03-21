@@ -1,0 +1,60 @@
+{
+  "name": "@zondax/ledger-sovereign-js",
+  "version": "0.0.0",
+  "description": "Node API for the Sovereign App (Ledger Nano S, S+, X, Stax and Flex)",
+  "keywords": [
+    "Zondax",
+    "Ledger",
+    "Typescript",
+    "Javascript",
+    "Sovereign"
+  ],
+  "homepage": "https://github.com/zondax/ledger-sovereign-js",
+  "bugs": {
+    "url": "https://github.com/zondax/ledger-sovereign-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zondax/ledger-sovereign-js.git"
+  },
+  "license": "Apache-2.0",
+  "author": "Zondax AG",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "format": "FORCE_COLOR=1 prettier --write . && sort-package-json",
+    "format:check": "FORCE_COLOR=1 prettier --check .",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "yarn build && jest",
+    "upgrade": "bunx npm-check-updates -i"
+  },
+  "dependencies": {
+    "@zondax/ledger-js": "^1.2.0"
+  },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "^6.29.4",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/jest": "29.5.14",
+    "@types/node": "^22.13.11",
+    "@typescript-eslint/eslint-plugin": "^8.27.0",
+    "@typescript-eslint/parser": "^8.27.0",
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-tsdoc": "^0.4.0",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "prettier": "^3.5.3",
+    "sort-package-json": "^3.0.0",
+    "ts-jest": "^29.2.6",
+    "typescript": "^5.8.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
