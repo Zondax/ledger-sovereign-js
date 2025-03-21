@@ -1,6 +1,6 @@
 {
-  "name": "@zondax/ledger-sovereign-js",
-  "version": "0.0.0",
+  "name": "@zondax/ledger-sovereign",
+  "version": "0.0.2",
   "description": "Node API for the Sovereign App (Ledger Nano S, S+, X, Stax and Flex)",
   "keywords": [
     "Zondax",
