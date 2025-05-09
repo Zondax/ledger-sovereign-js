@@ -16,7 +16,7 @@
 import type Transport from '@ledgerhq/hw-transport'
 import BaseApp, { BIP32Path, INSGeneric, processErrorResponse, processResponse } from '@zondax/ledger-js'
 import { ByteStream } from '@zondax/ledger-js/dist/byteStream'
-
+import { Schema, Transaction } from './types'
 import { P1_VALUES, PUBKEYLEN } from './consts'
 import { ResponseAddress, ResponseSign } from './types'
 
@@ -61,9 +61,12 @@ export class SovereignApp extends BaseApp {
     }
   }
 
-  async sign(path: BIP32Path, blob: Buffer): Promise<ResponseSign> {
-    const chunks = this.prepareChunks(path, blob)
-    // TODO: if P2 is needed, use `sendGenericChunk`
+  async sign(path: BIP32Path, blob: Transaction, schema: Schema): Promise<ResponseSign> {
+    const bs = new ByteStream()
+    bs.appendBytes(this.encodeSchema(schema))
+    bs.appendBytes(blob)
+
+    const chunks = this.prepareChunks(path, bs.getCompleteBuffer())
     try {
       let signatureResponse = await this.sendGenericChunk(this.INS.SIGN, 0, 1, chunks.length, chunks[0])
 
@@ -78,4 +81,22 @@ export class SovereignApp extends BaseApp {
       throw processErrorResponse(e)
     }
   }
+
+  encodeSchema(schema: Schema): Buffer {
+    const bs = new ByteStream()
+
+    bs.appendBytes(schema.merkleProof.leavesData)
+    bs.appendBytes(schema.merkleProof.leavesIndices)
+    bs.appendBytes(schema.merkleProof.lemmas)
+    bs.appendBytes(schema.merkleProof.treeSize)
+    bs.appendBytes(schema.merkleProof.rootHash)
+    bs.appendBytes(schema.rootTypeIndices)
+    bs.appendBytes(schema.chainData)
+    bs.appendBytes(schema.extraDataHash)
+    bs.appendBytes(schema.chainHash)
+
+    return bs.getCompleteBuffer()
+  }
 }
+
+
