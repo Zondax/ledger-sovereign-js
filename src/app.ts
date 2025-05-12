@@ -62,11 +62,7 @@ export class SovereignApp extends BaseApp {
   }
 
   async sign(path: BIP32Path, blob: Transaction, schema: Schema): Promise<ResponseSign> {
-    const bs = new ByteStream()
-    bs.appendBytes(this.encodeSchema(schema))
-    bs.appendBytes(blob)
-
-    const chunks = this.prepareChunks(path, bs.getCompleteBuffer())
+    const chunks = this.prepareChunks(path, this.encodeSchema(blob, schema))
     try {
       let signatureResponse = await this.sendGenericChunk(this.INS.SIGN, 0, 1, chunks.length, chunks[0])
 
@@ -82,7 +78,7 @@ export class SovereignApp extends BaseApp {
     }
   }
 
-  encodeSchema(schema: Schema): Buffer {
+  encodeSchema(transaction: Transaction, schema: Schema): Buffer {
     const bs = new ByteStream()
 
     bs.appendBytes(schema.merkleProof.leavesData)
@@ -93,6 +89,7 @@ export class SovereignApp extends BaseApp {
     bs.appendBytes(schema.rootTypeIndices)
     bs.appendBytes(schema.chainData)
     bs.appendBytes(schema.extraDataHash)
+    bs.appendBytes(transaction)
     bs.appendBytes(schema.chainHash)
 
     return bs.getCompleteBuffer()
