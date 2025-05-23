@@ -16,8 +16,9 @@
 import type Transport from '@ledgerhq/hw-transport'
 import BaseApp, { BIP32Path, INSGeneric, processErrorResponse, processResponse } from '@zondax/ledger-js'
 import { ByteStream } from '@zondax/ledger-js/dist/byteStream'
-import { Schema, Transaction } from './types'
+
 import { P1_VALUES, PUBKEYLEN } from './consts'
+import { Schema, Transaction } from './types'
 import { ResponseAddress, ResponseSign } from './types'
 
 export class SovereignApp extends BaseApp {
@@ -62,6 +63,7 @@ export class SovereignApp extends BaseApp {
   }
 
   async sign(path: BIP32Path, blob: Transaction, schema: Schema): Promise<ResponseSign> {
+    //| borsh(leaves_data) | borsh(indices_leaves) | borsh(lemmas) | borsh(tree_size) | borsh(root_hash) | borsh(root_indexes) | borsh(chain_data) | borsh(extra_metadata_hash) | borsh(transaction) | borsh(chain_hash)
     const chunks = this.prepareChunks(path, this.encodeSchema(blob, schema))
     try {
       let signatureResponse = await this.sendGenericChunk(this.INS.SIGN, 0, 1, chunks.length, chunks[0])
@@ -81,6 +83,10 @@ export class SovereignApp extends BaseApp {
   encodeSchema(transaction: Transaction, schema: Schema): Buffer {
     const bs = new ByteStream()
 
+    if (!transaction || !schema) {
+      throw new Error('Transaction and schema must be provided')
+    }
+
     bs.appendBytes(schema.merkleProof.leavesData)
     bs.appendBytes(schema.merkleProof.leavesIndices)
     bs.appendBytes(schema.merkleProof.lemmas)
@@ -95,5 +101,3 @@ export class SovereignApp extends BaseApp {
     return bs.getCompleteBuffer()
   }
 }
-
-
